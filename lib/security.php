@@ -23,6 +23,7 @@ function securityCheck($path_parts, $yourURL, $form = false) {
     $whiteListPages[] = "form.php";
     $whiteListPages[] = "approve.php";
     $whiteListPages[] = "remove.php";
+    $whiteListPages[] = "about.php";
 
     //add all the folders to this array
     $whiteListFolders = array();
