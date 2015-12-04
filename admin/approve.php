@@ -57,7 +57,8 @@ if (!adminCheck($thisDatabaseReader, $username)) {
     $query .= " WHERE fldApproved = ?";
     $query .= " ORDER BY fldDateSubmitted";
     $queryData = array(0);
-
+//    print_r(array(0));
+    
     // Call select method
     $info = $thisDatabaseReader->select($query, $queryData, 1, 1, 0, 0, false, false);
 

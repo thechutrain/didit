@@ -1,111 +1,143 @@
-
 /*
-Reference for element widths and margins
-
-WIDTHS ////////////////////////////////
-
-one-column
-width: 18.3739%; /*  180.8px / 984px = 0.183739
-
-two
-width: 38.7804%; /* 381.6px / 984px = 0.387804
-
-three
-width: 59.1869%; /* 582.4px / 984px = 0.591869
-
-four
-width: 79.5934%; /* 783.2px / 984px = 0.795934
-
-five
-width: 100%
-
-MARGINS /////////////////////////////////
-
-starting left-column
-no margin-left
-
-second column
-margin-left: 20.4065%; /* 200.8px / 984px = 0.204065
-
-third column
-margin-left: 40.8028%; /* 401.6px / 984px = 0.408028
-
-fourth column
-margin-left: 61.2195%; /* 602.4 / 984px = 0.612195
-
-fifth column
-margin-left: 81.6260%; /* 803.2  / 984px = 0.816260
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Dec 4, 2015, 1:21:52 PM
+    Author     : alanchu
 */
 
-* {
-  margin: 0;
-  padding: 0;
+figure.bioPhoto > img{
+    border-radius: 500pt;
+    /*    max-width: 50px;*/
 }
 
-#page {
-    margin: 40px auto;
-    padding: 0 1em;
-    font-size: 16px;
-    max-width: 61.5em /* 984px / 16px = 61.5em */
+/*body {
+    font: 24px Helvetica;
+    background: #999999;
 }
 
-/* -------------- HEADER --------------- */
-header {
-    margin-bottom: 1em;
+.bioPhoto {
+    max-width: 220px;   
 }
 
-/* -------------- NAV ------------------ */
-
-nav {
-    margin-left: 0;
-    width: 18.3739%; /*  180.8px / 984px = 0.183739 */
+img {
+    max-width: 200px;
+    border-radius: 200pt;
     float: left;
+    margin-right: 20px;
+    margin-bottom: 20px;
 }
 
-nav ol {
-    list-style-type: none;
+.person {
+    min-height:200px;
+}
+#main {
+    min-height: 800px;
+    margin: 0px;
+    padding: 0px;
+    display: -webkit-flex;
+    display:         flex;
+    -webkit-flex-flow: row;
+    flex-flow: row;
 }
 
-/* -------------- ARTICLE --------------- */
-
-article {
-    margin-left: 20.4065%; /* 200.8px / 984px = 0.204065 */
-    width: 79.5934%; /* 783.2px / 984px = 0.795934 */
+#articleContainer {
+    min-height: 800px;
+    margin: 0px;
+    padding: 0px;
+    display: -webkit-flex;
+    display:         flex;
+    -webkit-flex-flow: column;
+    flex-flow: column; 
+    -webkit-flex: 3 1 60%;
+    flex: 3 1 60%;
+    -webkit-order: 2;
+    order: 2;
 }
 
-article table {
-    border: 1px solid black;
+#articleContainer > article {
+    margin: 4px;
+    padding: 5px;
+    border: 1px solid #cccc33;
+    border-radius: 7pt;
+    background: #dddd88;
+    -webkit-flex: 3 1 50%;
+    flex: 3 1 50%;
+    -webkit-order: 2;
+    order: 2;
 }
 
-article table td, th {
-    padding: 0.5em;
-    border: 1px solid black;
+#main > nav {
+    margin: 4px;
+    padding: 5px;
+    border: 1px solid #8888bb;
+    border-radius: 7pt;
+    background: #ccccff;
+    -webkit-flex: 1 6 20%;
+    flex: 1 6 20%;
+    -webkit-order: 1;
+    order: 1;
 }
 
-/* -------------- FOOTER --------------- */
-
-footer {
-    margin-left: 0;
-    margin-top: 1em;
-    width: 100%;
-    clear: both;
-    text-align: center;
+#main > aside {
+    margin: 4px;
+    padding: 5px;
+    border: 1px solid #8888bb;
+    border-radius: 7pt;
+    background: #ccccff;
+    -webkit-flex: 1 6 20%;
+    flex: 1 6 20%;
+    -webkit-order: 3;
+    order: 3;
 }
 
-/* -------------- CLASSES --------------- */
-
-input.no-edit {
-    background-color: lightgray
+header, footer {
+    display: block;
+    margin: 4px;
+    padding: 5px;
+    min-height: 100px;
+    border: 1px solid #eebb55;
+    border-radius: 7pt;
+    background: #ffeebb;
 }
 
-div#overlay {
-   display: none;
-   position: fixed;
-   left: 0px;        /* This positions the element to the left most position */
-   top: 0px;         /* This positions the elment to the top most position */
-   width: 100%;      /* This makes the element take up 100% of the parents width */
-   height: 100%;     /* This makes the element take up 100% of the parents height */
-   background: #000; /* black */
-   opacity: 0.5;
-   z-index: 99999;   /* Change the z-index so it will be above everything else */
-}
+ Too narrow to support three columns 
+@media all and (max-width: 640px) {
+
+    #main, #page {
+        -webkit-flex-flow: column;
+        flex-direction: column;
+    }
+       COMMENT THIS OUT
+       #main > article, #main > nav, #main > aside {
+         Return them to document order 
+        -webkit-order: 0;
+                order: 0;
+       }
+
+    #main > header{
+        -webkit-order: 0;
+        order: 0;    
+    }
+    #main > nav{
+        -webkit-order: 1;
+        order: 1;
+    }
+
+    #main > article{
+        -webkit-order: 2;
+        order: 2;
+    }
+
+    #main > footer{
+        -webkit-order: 10;
+        order: 10;
+    }
+    #main > nav, #main > aside, header, footer {
+        min-height: 50px;
+        max-height: 50px;
+    }
+
+}*/

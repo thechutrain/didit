@@ -1,5 +1,6 @@
 <?php
 $debug = false;
+$debug = htmlspecialchars($_GET["debug"]);
 
 include "lib/constants.php";
 require_once('lib/custom-functions.php');
@@ -8,7 +9,7 @@ require_once('lib/validation-functions.php');
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Stuff You Need to Do | University of Vermont</title>
+        <title>Chekkit| University of Vermont</title>
         <meta charset="utf-8">
         <meta name="author" content="Joe Siebert, Alan Chu">
         <meta name="description" content="This site displays present and past student's favorite activities from when they were students at the University of Vermont. It's meant as a loose road map for current students and a source of nostalgia for alumni.">
@@ -137,6 +138,8 @@ require_once('lib/validation-functions.php');
 
         <link rel="stylesheet" href="<?php print $path; ?>css/styles.css"
               type="text/css" media="screen">
+        <link rel="stylesheet" href="<?php print $path; ?>css/foundation.css" />
+        <link rel="stylesheet" href="<?php print $path; ?>css/app.css" />
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="<?php print $path; ?>js/show-info.js"></script>
@@ -146,7 +149,15 @@ require_once('lib/validation-functions.php');
     <!-- **********************     Body section      ********************** -->
     <?php
     print '<body id="' . $path_parts['filename'] . '">';
-    print '<div id="page">';
-    include "header.php";
+    
+    print '<div class="top-bar">';
     include "nav.php";
+    print '</div>';
+    
+    print '<div class="callout large primary">';
+    include "header.php";
+    print '</div>';
+    
+    print '<div class="row">';
+    print '<main class="large-8 large-centered columns">';
     ?>
