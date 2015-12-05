@@ -5,64 +5,10 @@ include "top.php";
 $numberRecords = 10;
 
 print "<article>";
-print "<h2>The List</h2>";
+print "<h2>The Most Recently Submitted Activities!</h2>";
 print "<p>You can click on the names of the activities to get more information.";
-print " Please feel free to vote up or down activities you've done before.</p>";
+print " Up vote for your favorite activities</p>";
 
-// Simple query to count records
-//$queryTotal = "SELECT COUNT(fldName) AS count";
-//$queryTotal .= " FROM tblActivities";
-//$queryTotal .= " WHERE fldApproved = ?";
-//$totalData = array(1);
-//print_r(array(1));
-
-// SELECT all records
-//$total = $thisDatabaseReader->select($queryTotal, $totalData, 1, 0, 0, 0, false, false);
-
-// Make sure to set query number as int for security
-//if (isset($_GET['start']) AND ($_GET['start'] > 0
-//        AND ($_GET['start'] < $total[0]['count']))) {
-//    $startRecord = (int) $_GET['start'];
-//} else {
-//    $startRecord = 0;
-//}
-
-print '<div class="text-center">';
-print '<h4>Displaying records ';
-
-print ($startRecord + 1) . ' - ';
-if ($startRecord + $numberRecords > $total[0]['count']) {
-    print $total[0]['count'];
-} else {
-    print $startRecord + $numberRecords;
-}
-print ' of ' . $total[0]['count'] . '</h4>';
-
-print '<ol class="menu text-center">';
-print '<li';
-if ($startRecord - $numberRecords < 0) {
-    print ' class="unavailable"';
-}
-print '><a href="?start=' . ($startRecord - $numberRecords) . '">';
-print 'Previous</a></li>';
-print '<li';
-if ($startRecord + $numberRecords >= $total[0]['count']) {
-    print ' class="unavailable"';
-}
-print '><a href="?start=' . ($startRecord + $numberRecords) . '">';
-print 'Next</a></li>';
-print '</ol>';
-print '</div>';
-
-// Get activity ID
-if (isset($_POST['btnUpVote']) OR isset($_POST['btnDownVote'])) {
-    if (isset($_POST['btnUpVote'])) {
-        $activityID = (int) htmlentities($_POST["hidActivityId"], ENT_QUOTES, "UTF-8");
-        $vote = 1;
-    } else {
-        $activityID = (int) htmlentities($_POST["hidActivityId"], ENT_QUOTES, "UTF-8");
-        $vote = -1;
-    }
 
     // Query database looking for activity ID
     $checkActivityQuery = "SELECT pmkActivityId";
@@ -73,98 +19,6 @@ if (isset($_POST['btnUpVote']) OR isset($_POST['btnDownVote'])) {
     $checkActivity = $thisDatabaseReader->select($checkActivityQuery, $checkActivityData, 1, 0, 0, 0, false, false);
 
 
-    // Make sure array returned something; signals that activity ID is valid
-    // If invalid, print error
-    if (!$checkActivity) {
-        print "<p>Invalid activity number.</p>";
-    } else { // if valid
-        $selectUserQuery = "SELECT pmkNetId";
-        $selectUserQuery .= " FROM tblAffiliates";
-        $selectUserQuery .= " WHERE pmkNetId = ?";
-        $selectUserData = array($username);
-
-        $checkUser = $thisDatabaseReader->select($selectUserQuery, $selectUserData, 1, 0, 0, 0, false, false);
-
-        if (!$checkUser) { // if user is not in affiliates table
-            $userInsertQuery = "INSERT INTO tblAffiliates SET";
-            $userInsertQuery .= " pmkNetId = ?";
-            $userInsertData = array($username);
-
-            $userInserted = $thisDatabaseWriter->insert($userInsertQuery, $userInsertData, 0, 0, 0, 0, false, false);
-        }
-
-        // Query database for user/activity vote combo
-        $checkVoteQuery = "SELECT fldVote";
-        $checkVoteQuery .= " FROM tblVotes";
-        $checkVoteQuery .= " WHERE fnkActivityId = ? AND";
-        $checkVoteQuery .= " fnkNetId = ?";
-        $checkVoteData = array($activityID, $username); // username defined in top.php
-
-        $checkVote = $thisDatabaseReader->select($checkVoteQuery, $checkVoteData, 1, 1, 0, 0, false, false);
-        
-        $inserted = "";
-        $updated = "";
-        
-        if (!$checkVote) { // If vote doesn't exist
-
-            $insertQuery = "INSERT INTO tblVotes SET";
-            $insertQuery .= " fnkNetId = ?,";
-            $insertQuery .= " fnkActivityId = ?,";
-            $insertQuery .= " fldVote = ?";
-            $insertData = array($username, $activityID, $vote);
-
-            $inserted = $thisDatabaseWriter->insert($insertQuery, $insertData, 0, 0, 0, 0, false, false);
-
-            if ($inserted) {
-                print '<section class="panel success-panel">';
-                print "<p>Your vote has been tallied. Thanks for voting!</p>";
-                print '</section>';
-            }
-            
-        } else {
-            // Check that voter won't exceed min/max
-            $newVote = $checkVote[0]['fldVote'] + $vote; // $checkVote should contain one value
-            
-            // Check that new vote won't exceed 1 or fall below -1
-            if ($newVote > 1) { // Vote exceeds max
-                print '<section class="panel alert-panel">';
-                print "<p>Sorry, you cannot upvote this activity again.</p>";
-                print '</section>';
-            } else if ($newVote < -1) { // Vote falls below min
-                print '<section class="panel alert-panel">';
-                print "<p>Sorry, you cannot downvote this activity again.</p>";
-                print '</section>';
-            } else { // vote is valid
-                $updateQuery = " UPDATE tblVotes SET";
-                $updateQuery .= " fldVote = ?";
-                $updateQuery .= " WHERE fnkActivityId = ? AND";
-                $updateQuery .= " fnkNetId = ?";
-                $updateData = array($newVote, $activityID, $username);
-
-                $updated = $thisDatabaseWriter->update($updateQuery, $updateData, 1, 1, 0, 0, false, false);
-                
-                if ($updated) {
-                    print '<section class="panel success-panel">';
-                    print "<p>Your vote has been changed. Thanks for voting!</p>";
-                    print '</section>';
-                }
-            }
-        }
-    }
-}
-
-// Query - that grabs the last three approved activities, works!!!
-// SELECT pmkActivityId, fldName, fldCategory, fldOnCampus, fldTownName, fldState, fldDistance, fldLocation, fldDescription, fnkSubmitNetId FROM tblActivities A INNER JOIN tblVotes V ON A.pmkActivityId = V.fnkActivityId INNER JOIN tblTowns T ON A.fnkTownId = T.pmkTownId WHERE fldApproved = 1 GROUP BY A.fldName ORDER BY fldDateSubmitted DESC LIMIT 3
-// 
-// 
-//SELECT pmkActivityId, fldName, fldCategory, fldOnCampus, fldTownName, fldState, fldDistance, fldLocation, fldDescription, fnkSubmitNetId 
-//FROM tblActivities A INNER JOIN tblVotes V ON A.pmkActivityId = V.fnkActivityId INNER JOIN tblTowns T ON A.fnkTownId = T.pmkTownId 
-//WHERE fldApproved = 1 
-//GROUP BY A.fldName 
-//ORDER BY fldDateSubmitted DESC LIMIT 3
-
-
-
 $query = "SELECT pmkActivityId, fldName, fldCategory, fldOnCampus, fldTownName,"; 
 $query .= " fldState, fldDistance, fldLocation, fldDescription, fnkSubmitNetId";
 $query .= " FROM tblActivities A INNER JOIN tblVotes V ON";
@@ -173,17 +27,6 @@ $query .= " ON A.fnkTownId = T.pmkTownId";
 $query .= " WHERE fldApproved = 1";
 $query .= " GROUP BY A.fldName";
 $query .= " ORDER BY fldDateSubmitted DESC LIMIT 3";
-
-// NEED TO ADD LIMIT CLAUSE
-//$query = "SELECT pmkActivityId, fldName, fldCategory, fldOnCampus, fldTownName, fldState";
-////$query .= ", fldDistance, fldLocation, fldCost, fldURL, fldDescription, fnkSubmitNetId";
-//$query .= " FROM tblActivities A";
-//$query .= " INNER JOIN tblVotes V ON A.pmkActivityId = V.fnkActivityId";
-//$query .= " INNER JOIN tblTowns T ON A.fnkTownId = T.pmkTownId";
-//$query .= " WHERE fldApproved = 1";
-//$query .= " GROUP BY A.fldName";
-//$query .= " ORDER BY SUM(fldVote) DESC";
-//$query .= " LIMIT " . $numberRecords . " OFFSET " . $startRecord;
 $data = array(""); // for some reason, variables don't work in array for this
 $val = array(1, 1, 0, 0);
 
@@ -205,29 +48,6 @@ $rank = 1;
 foreach ($info as $record) {
     print '<div id="dropdown-' . $rank . '" ';
     print 'class="panel dropdown dropdown-processed">';
-    
-    // ** Add vote buttons **//
-    // Add upvote form/button
-    print '<form action="' . $phpSelf . '" method="post" ';
-    print 'id="frmVote-' . $record['pmkActivityId'] . '" ';
-    print 'class="float-left">';
-    
-    // Add hidden field to hold activity ID
-    print '<fieldset class="vote-button">';
-    print '<input type="hidden" id="hidActivityId' . $record['pmkActivityId'] . '" ';
-    print 'name="hidActivityId" value="' . $record['pmkActivityId'] . '">';
-    
-    // Add up button
-    print '<input type="submit" id="btnUpVote-' . $record['pmkActivityId'] . '" ';
-    print 'name="btnUpVote" value="&#x25B2" ';
-    print 'tabindex="100" class="up-vote">';
-    
-    // Add down button
-    print '<input type="submit" id="btnDownVote-' . $record['pmkActivityId'] . '" ';
-    print 'name="btnDownVote" value="&#x25BC" ';
-    print 'tabindex="110" class="down-vote">';
-    print '</fieldset>';
-    print '</form>';
     
     print '<p>';
     
