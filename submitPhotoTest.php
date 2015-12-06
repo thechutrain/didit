@@ -1,101 +1,6 @@
 <?php
 include "top.php";
-//%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
-//
-// Validating image upload
-// Do not show notice errors
-//error_reporting (E_ALL ^ E_NOTICE);
-//
-//if(!empty($_FILES) AND isset($_POST['btnSubmit'])) // Has the image been uploaded?
-//{
-//include 'lib/config.php';
-//// TEST
-////print "<pre>";
-////print_r($_FILES);
-//
-//$file = $_FILES['imgFileToUpload'];
-//
-//$file_name = $file['name'];
-//
-//$fileERROR = false; 
-//
-//// Get File Extension (if any)
-//$ext = strtolower(substr(strrchr($file_name, "."), 1));
-//
-//// Check for a correct extension. The image file hasn't an extension? Add one
-//
-////%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
-//// Validation
-//   if($validation_type == 1)
-//   {
-//   $file_info = getimagesize($_FILES['imgFileToUpload']['tmp_name']);
-//
-//      if(empty($file_info)) // No Image?
-//      {
-//      $errorMsg[] = "The uploaded file doesn't seem to be an image.";
-//      }
-//      else // An Image?
-//      {
-//      // little confused here
-//      $file_mime = $file_info['mime'];
-//     // TESTING
-////      print "<pre>";
-////      print_r($file_mime);   // returns img/jpeg
-//
-//         if($ext == 'jpc' || $ext == 'jpx' || $ext == 'jb2')
-//         {
-//         $extension = $ext;
-//         }
-//         else
-//         {
-//         $extension = ($mime[$file_mime] == 'jpeg') ? 'jpg' : $mime[$file_mime];
-//         }
-//
-//         if(!$extension)
-//         {
-//         $extension = '';  
-//         $file_name = str_replace('.', '', $file_name); 
-//         }
-//	  }
-//   }
-//   else if($validation_type == 2)
-//   {
-//	  if(!in_array($ext, $image_extensions_allowed))
-//	  {
-//	  $exts = implode(', ',$image_extensions_allowed);
-//	  $errorMsg[] = "You must upload a file with one of the following extensions: ".$exts;
-//	  }
-//
-//	  $extension = $ext;
-//   }
-//
-//   if(empty($errorMsg)) // No errors were found?
-//   {
-//   $new_file_name = strtolower($file_name);
-//   $new_file_name = str_replace(' ', '-', $new_file_name);
-//   $new_file_name = substr($new_file_name, 0, -strlen($ext));
-//   $new_file_name .= $extension;
-//   
-//   // File Name
-//   $move_file = move_uploaded_file($file['tmp_name'], $upload_image_to_folder.$new_file_name);
-//
-//   if($move_file)
-//	   {
-//	   $done = 'The image has been uploaded.';
-//	   }
-//   }
-//   else
-//   {
-//   @unlink($file['tmp_name']);
-//   }
-//
-//   $file_uploaded = true;
-//   //print("<pre>");
-////print_r($file_name);
-//} // closes the first if button was submitted & there is something in the $_FILES array
-//%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
-//%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
-//
+
 // SECTION: 1 Initialize variables
 //
 // SECTION: 1a.
@@ -137,8 +42,6 @@ $photoDescription = "";
 $photoCaption = "";
 $approved = 0;
 
-// TESTING
-//print_r($user); aychu
 // %^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
 // SECTION 1d: Form error flags: Initalize ERROR flags, one for each form element
@@ -171,10 +74,6 @@ if (isset($_POST['btnSubmit']) AND ! empty($_FILES)) {
     // config.php is used to validate the image file
     include 'lib/config.php';
 
-//    DEBUGGING   
-//print "<pre>";
-//print_r($_FILES);
-//print "</pre>";
     // %^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
     //
     // SECTION 2a: Security
@@ -196,12 +95,6 @@ if (isset($_POST['btnSubmit']) AND ! empty($_FILES)) {
     $activityID = (int) htmlentities($_POST["hidActivityId"], ENT_QUOTES, "UTF-8");
     $photoData[] = $activityID;
 
-//    if ($activityID > 0) {
-//        $update = true;
-//    } else {
-//        $update = false;
-//    }
-//    
     // 2.) Add the netId of the user to the photoData array
     $photoData[] = $user;
 
@@ -209,8 +102,6 @@ if (isset($_POST['btnSubmit']) AND ! empty($_FILES)) {
     $file = $_FILES['imgFileToUpload'];
     $fileName = $file['name'];
     
-//    print("<pre>");
-//    print_r($fileName);
     // 4.) Add the Caption of the photo to the array
     $photoCaption = htmlentities($_POST['txtPhotoCaption'], ENT_QUOTES, "UTF-8");
     $photoData[] = $photoCaption;
@@ -219,10 +110,7 @@ if (isset($_POST['btnSubmit']) AND ! empty($_FILES)) {
     // $approved will always be 0, assume false
 //    $photoData[] = $approved;
 
-// DEBUGGING 
-//    print "<h4>";
-//    print_r($photoData);
-//    print "</h4>";
+
     // For all OPTION DATA, add it to array only if it's not empty
 //    $photoDescription = htmlentities($_GET['txtPhotoDescription'], ENT_QUOTES, "UTF-8");
 //    if ($photoDescription != "") {
@@ -284,11 +172,6 @@ if (isset($_POST['btnSubmit']) AND ! empty($_FILES)) {
         $userError = true;
     }
 
-//    if (!verifyAlphaNum($user)) {
-//        $errorMsg[] = "Your NetID appears to include invalid characters.";
-//        $userError = true;
-//    }
-
     if ($photoCaption == "") {
         $errorMsg[] = "The photo caption can not be empty.";
         $captionError = true;
@@ -335,34 +218,15 @@ if (isset($_POST['btnSubmit']) AND ! empty($_FILES)) {
         $new_file_name .= $photoCount;
         $new_file_name .= ".";
         $new_file_name .= $extension;
-//        print_r($new_file_name);
         // NEED to add new file to whitepage listing!!!
         // no need ... its working?
         
-//        print "<pre>";
-//        print_r($new_file_name);
-        
-        // upload the file to upload directory
-//        $new_file_name = strtolower($fileName);
-//        $new_file_name = str_replace(' ', '-', $new_file_name);
-//        $new_file_name = substr($new_file_name, 0, -strlen($ext));
-//        $new_file_name .= $extension;
+
         // Attemps to move file to upload directory, moveFile boolean!
         $movedFile = move_uploaded_file($file['tmp_name'], $upload_image_to_folder.$new_file_name);
         // add the new filename to the photoData array for insert query
         $photoData[] = $new_file_name;
-        
-        // QUERY, insert data the valid data into the table
-        // INSERT INTO tblPhotos SET pmkPhotoId = NULL, fnkActivityId = 8, 
-        // fnkNetId = 'aychu', fldCaption = 'everyone loves wine', 
-        // fldApproved =0, fldFileName = "wine.jpg"
-        
-        // Add required fields to query
-//        $query .= " fnkActivityId = ?,";
-//        $query .= " fnkNetId = ?,";
-//        $query .= " fldCaption = ?,";
-//        $query .= " fldLink = ?,";
-//        $query .= " fldApproved = ?,";
+      
         
         $query = "INSERT INTO tblPhotos SET";
         $query .= " pmkPhotoId = NULL";
@@ -377,8 +241,7 @@ if (isset($_POST['btnSubmit']) AND ! empty($_FILES)) {
         if ($photoInsert != 1){
             $uploadERROR = true;
         }
-//        print_r($photoInsert);
-//        $query = ;
+
         // SECTION 2f: Create message
         $message = "<h2>Thank you! Your activity has been submitted for approval</h2>";
 
@@ -389,17 +252,11 @@ if (isset($_POST['btnSubmit']) AND ! empty($_FILES)) {
 
         $message.= "<p>A copy of the submitted information appears below.</p>";
 
-//        print "<h4>";
-//        print_r($_POST);
-//        print "<\h4>";
 
         foreach ($_POST as $key => $value) {
             if ($key != 'btnSubmit') {
                 $message.= "<p>";
                 $camelCase = preg_split('/(?=[A-Z])/', substr($key, 3));
-//                $camelCase = $key;
-//                $message .= $camelCase;
-
 
                 foreach ($camelCase as $one) {
                     $message.= $one . ' ';
@@ -410,11 +267,6 @@ if (isset($_POST['btnSubmit']) AND ! empty($_FILES)) {
             }
         }
 
-        // Print out info on the $_FILES array
-//        print"<pre>";
-//        print_r($_FILES['imgFileToUpload']);
-//        print "<hr>";
-//        print_r($_POST);
         $message.= "<hr>";
 
         foreach ($file as $key => $value) {
@@ -425,11 +277,6 @@ if (isset($_POST['btnSubmit']) AND ! empty($_FILES)) {
                 $message = trim($message);
                 $message.= ": " . htmlentities($value, ENT_QUOTES, "UTF-8") . "</p>";
             }
-            // returns to user all info of file, not necessary
-//            $message.="<p>";
-//            $message.=$key . " ";
-//            $message = trim($message);
-//            $message.= ": " . htmlentities($value, ENT_QUOTES, "UTF-8") . "</p>";
         }
 
         $message .= "<br><p>Thanks again!</p>";
