@@ -36,7 +36,7 @@ $user = $username;
 
 // file Variables
 $fileName = "";
-$fileLocation = "";
+$new_file_name = "";
 
 $photoDescription = "";
 $photoCaption = "";
@@ -214,7 +214,7 @@ if (isset($_POST['btnSubmit']) AND ! empty($_FILES)) {
         $photoCount = $info[0][0];
         
         # rename the file
-        $new_file_name = $activityID . "_";
+        $new_file_name = $activityID . "-";
         $new_file_name .= $photoCount;
         $new_file_name .= ".";
         $new_file_name .= $extension;
@@ -267,7 +267,7 @@ if (isset($_POST['btnSubmit']) AND ! empty($_FILES)) {
             }
         }
 
-        $message.= "<hr>";
+//        $message.= "<hr>";
 
         foreach ($file as $key => $value) {
             if ($key == "name") {
