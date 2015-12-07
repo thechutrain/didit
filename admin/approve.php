@@ -5,9 +5,13 @@ include '../top.php';
 print "<article>";
 
 if (!adminCheck($thisDatabaseReader, $username)) {
-    print "<h2>Sorry.</h2>";
+    print '<section class="panel alert-panel">';
+    print "<h4>Sorry.</h4>";
     print "<p>You don't have access to this page.</p>";
+    print '</section>';
 } else {
+    print "<h2>Unapproved Activities</h2>";
+    
     if (isset($_GET['activity'])) {
         $activityID = (int) $_GET['activity'];
 
@@ -27,9 +31,7 @@ if (!adminCheck($thisDatabaseReader, $username)) {
             }
         }
 
-        print '<section id="update-status">';
-
-        if ($validID) {
+        if ($validID) {        
             $update = " UPDATE tblActivities SET";
             $update .= " fldApproved = ?";
             $update .= " WHERE pmkActivityId = ?";
@@ -38,18 +40,21 @@ if (!adminCheck($thisDatabaseReader, $username)) {
             $updated = $thisDatabaseWriter->update($update, $updateData, 1, 0, 0, 0, false, false);
 
             if ($updated) {
+                print '<section class="panel success-panel">';
                 print "<p>Activity " . $activityID . " has been approved.</p>";
+                print '</section>';
             }
         } else {
+            print '<section class="panel alert-panel">';
             print "<p>Invalid activity ID.</p>";
+            print "</section>";
         }
 
-        print "</section>";
     }
-    print "<section>";
-
-    print "<h2>Unapproved Activities</h2>";
+    
     print "<p>The following activities need to be approved:</p>";
+    
+    print '<section class="panel">';
 
     $query = "SELECT pmkActivityId, fldName, fldOnCampus, fldTownName, fldState";
     $query .= " FROM tblActivities A";
@@ -57,7 +62,7 @@ if (!adminCheck($thisDatabaseReader, $username)) {
     $query .= " WHERE fldApproved = ?";
     $query .= " ORDER BY fldDateSubmitted";
     $queryData = array(0);
-//    print_r(array(0));
+
     // Call select method
     $info = $thisDatabaseReader->select($query, $queryData, 1, 1, 0, 0, false, false);
 
@@ -98,13 +103,13 @@ if (!adminCheck($thisDatabaseReader, $username)) {
         // For loop to print records
         foreach ($info as $record) {
             $appendURL = '?activity=' . $record['pmkActivityId'];
-
+            
             print '<tr>';
             // Uses field names (AKA headers) as keys to pick from arrays
             foreach ($headers as $field) {
                 print '<td>' . htmlentities($record[$field]) . '</td>';
             }
-
+            
             print '<td><a href="' . $appendURL . '">Approve</a></td>';
             print '<td><a href="' . $path . 'form.php' . $appendURL;
             print '">View/Edit</a></td>';
@@ -122,7 +127,7 @@ if (!adminCheck($thisDatabaseReader, $username)) {
     print "</section>";
 }
 
-print "</article";
+print "</article>";
 
 include '../footer.php';
 ?>

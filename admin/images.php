@@ -3,84 +3,183 @@
 include '../top.php';
 
 print "<article>";
+
 if (!adminCheck($thisDatabaseReader, $username)) {
     print "<h2>Sorry.</h2>";
     print "<p>You don't have access to this page.</p>";
-} else {
-    // check to see if photo id sent to the url has an unapproved status
-    if (isset($_GET['photo'])) {
-        $photoID = (int) $_GET['photo'];
-        // query to check if its in the database
-        $check = " SELECT pmkPhotoId";
-        $check .= " FROM tblPhotos";
-        $check .= " WHERE fldApproved = 0";
-        $check .= " AND pmkPhotoId = ?";
-        $checkData = array($photoID);
 
-        // Call select method
-        $checkQuery = $thisDatabaseReader->select($check, $checkData, 1, 1, 0, 0, false, false);
+// Must be admin to see below here    
+} else {
+
+
+    print "<h2>Manage User Photos</h2>";
+
+    if (isset($_GET['activity'])) {
+        $activityID = (int) ($_GET['activity']);
+    } else {
+        $activityID = -1; // to make query fail
+    }
+
+    // Check to see if there are images for this activity
+    $checkQuery = "SELECT pmkPhotoId ";
+    $checkQuery .= "FROM tblPhotos ";
+    $checkQuery .= " WHERE fnkActivityId = ?";
+    $checkData = array($activityID);
+
+    $check = $thisDatabaseReader->select($checkQuery, $checkData, 1, 0, 0, 0, false, false);
+
+    // If activity ID does not have any images associated with it
+    if (!$check) {
+        print "<p>You have not selected an activity that has images associated with it.</p>";
+
+        print "<p>The following submitted photos need to be approved:</p>";
+
+        print "<section>";
+        $pendingQuery = "SELECT pmkPhotoId, pmkActivityId, fldName, fldCaption, fldFileName, fnkSubmitNetId";
+        $pendingQuery .= " FROM tblPhotos";
+        $pendingQuery .= " INNER JOIN tblActivities ON fnkActivityId = pmkActivityId";
+        $pendingQuery .= " WHERE tblPhotos.fldApproved = ?";
+        $pendingData = array(0);
+
+        $pending = $thisDatabaseReader->select($pendingQuery, $pendingData, 1, 0, 0, 0, false, false);
+
+        print '<div class="panel">';
         
-        // assumes its not valid, unless the query result matches the GET submission ID
-        $validID = false;
-        if($checkQuery[0]["pmkPhotoId"]==$photoID){
-            $validID = true;
-        }
-        
-        //if is valid, then go in update the record:
-        print '<section id="update-status">';
-        
-        if($validID){
-            $update = " UPDATE tblPhotos SET";
-            $update .= " fldApproved = ?";
-            $update .= " WHERE pmkPhotoId = ?";
-            $updateData = array(1, $photoID);
+        if (!$pending) {
+            print "<p>No photos are pending approval.";
+        } else {
+
+            // Start printing table
+            print '<table>';
             
-            $updated = $thisDatabaseWriter->update($update, $updateData, 1, 0, 0, 0, false, false);
-            if($updated){
-                print '<p>Photo ' .$photoID. ' has been approved</p>';
-            } else{
-                print "<p>Invalid Id! Unapproved photo " .$photoID . " does not exist</p>";
+            print '<tr>';
+            
+            $fields = array_keys($pending[0]);
+            $headers = array_filter($fields, 'is_string'); // Picks up only str values
+            
+            // Print headings
+            foreach ($headers as $head) {
+                $camelCase = preg_split('/(?=[A-Z])/', substr($head, 3));
+                $heading = "";
+                foreach ($camelCase as $oneWord) {
+                    $heading .= $oneWord . " ";
+                }
+                print '<th>' . $heading . '</th>';
             }
+            // add header columns for approve button
+            print "<th>Approve</th>";
+            print "</tr>";
+            
+            // for loop to print each record in search query
+            foreach ($pending as $record) {
+            $appendURL = '?activity=' . $record['pmkActivityId'];
+            $appendURL .= '&photo=' . $record['pmkPhotoId'];
+            $appendURL .= '&action=approve';
+ 
+            // print the row
+            print '<tr>';
+            // Uses field names (AKA headers) as keys to pick from arrays
+            foreach ($headers as $field) {
+                if ($field == "fldFileName") {
+                    print '<td><a href="' .$path . 'uploads/' . $record[$field] . '">'
+                            . $record[$field] . '<a></td>';
+                } else {
+                    print '<td>' . $record[$field] . '</td>';
+                }
+            }
+            // after printing out all fields, now links to approve
+            print '<td><a href="' . $appendURL . '">Approve</a></td>';
+            print '</tr>';
+            
+            
+        } // closes foreach ($unapproved as $record) loop
+            print "</table>";
         }
         
         print '</section>';
         
-        
-    } // closes the $_GET['photo] statement
+        print "<p>Users have submitted images for the following activities. Click any ";
+        print "activity name to see them.</p>";
 
-    print "<section>";    
-    print "<h2>Unapproved Photos</h2>";
-    print "<p>The following submitted photos need to be approved:</p>";
+        // Query to get activities with images
+        $listQuery = "SELECT DISTINCT pmkActivityId, fldName ";
+        $listQuery .= "FROM tblActivities ";
+        $listQuery .= "INNER JOIN tblPhotos ON pmkActivityId = fnkActivityId ";
+        $listQuery .= "ORDER BY fldDateSubmitted";
+        $listData = array();
 
-    // query = SELECT pmkPhotoId, fldFileName, tblPhotos.fldDateSubmitted, 
-    // fldName FROM tblPhotos INNER JOIN tblActivities ON 
-    // fnkActivityId = pmkActivityId WHERE tblPhotos.fldApproved = 0 
-    // ORDER BY tblPhotos.fldDateSubmitted DESC
-    $query = "SELECT pmkPhotoId, fldName, fldCaption, fldFileName, fnkSubmitNetId";
-    $query .= " FROM tblPhotos INNER JOIN tblActivities ON";
-    $query .= " fnkActivityId = pmkActivityId";
-    $query .= " WHERE tblPhotos.fldApproved = ?";
-    $query .= " ORDER BY tblPhotos.fldDateSubmitted DESC";
-    $queryData = array(0);
+        $activities = $thisDatabaseReader->select($listQuery, $listData, 0, 1, 0, 0, false, false);
+
+        print "<ul>";
+
+        foreach ($activities as $record) {
+            // build URL for link
+            $appendURL = "?activity=" . $record['pmkActivityId'];
+
+            print "<li>";
+            print '<a href="' . $appendURL . '">';
+            print $record['fldName'];
+            print '</a>';
+            print '</li>';
+        }
+
+        print "</ul>";
+    } else { // Activity ID has been entered and is valid
+        // Display any approve, unapprove or remove information first
+        if (isset($_GET['photo']) AND isset($_GET['action'])) {
+            $photoID = (int) ($_GET['photo']);
+
+            if (($_GET['action']) == "approve" OR ( $_GET['action']) == "unapprove") {
+                if (($_GET['action']) == "approve") {
+                    $approved = 1;
+                } else {
+                    $approved = 0;
+                }
+
+                $updateQuery = "UPDATE tblPhotos SET";
+                $updateQuery .= " fldApproved = ?";
+                $updateQuery .= " WHERE pmkPhotoId = ?";
+                $updateData = array($approved, $photoID);
+
+                $updated = $thisDatabaseWriter->update($updateQuery, $updateData, 1, 0, 0, 0, false, false);
+
+                print '<div class="panel ';
+
+                if ($updated) {
+                    print ' success-panel">';
+
+                    print '<p>Photo ' . $photoID . ' has been ';
+                    print ($approved) ? 'approved' : 'unapproved';
+                    print '.</p>';
+                } else {
+                    print ' alert-panel">';
+                    print "<p>Unable to update this record.</p>";
+                }
+
+                print '</div>';
+            } else if (($_GET['action']) == "remove") {
+                print "<p>Test remove</p>";
+            }
+        }
 
 
-    $unapproved = $thisDatabaseReader->select($query, $queryData, 1, 1, 0, 0, false, false);
-//    print "<pre>";
-//    print_r($unapproved);
-//    $test = $thisDatabaseReader->testquery($query, $queryData, 1, 1, 0, 0, false, false);
-    if (isset($_GET["debug"])) {
-        print "<pre>";
-        print_r($unapproved);
-    }
+        $photoQuery = "SELECT pmkPhotoId, fnkNetId, fldCaption, ";
+        $photoQuery .= "fldFileName, fldApproved ";
+        $photoQuery .= "FROM tblPhotos ";
+        $photoQuery .= "WHERE fnkActivityId = ?";
+        $photoData = array($activityID);
 
-    // check to see if there are unapproved activities
-    if ($unapproved) {
-        // Start printing table
-        print '<table>';
-        print '<tr>';
-        $fields = array_keys($unapproved[0]);
+        // Call select method
+        $photos = $thisDatabaseReader->select($photoQuery, $photoData, 1, 0, 0, 0, false, false);
+
+        print "<table>";
+
+        // Get headings from first subarray (removes indexes with filter function)
+        $fields = array_keys($photos[0]);
         $headers = array_filter($fields, 'is_string'); // Picks up only str values
-//                print_r($headers);
+
+        print "<tr>";
+
         // Print headings
         foreach ($headers as $head) {
             $camelCase = preg_split('/(?=[A-Z])/', substr($head, 3));
@@ -93,40 +192,52 @@ if (!adminCheck($thisDatabaseReader, $username)) {
 
             print '<th>' . $heading . '</th>';
         }
-        // add header columns for approve button
-        print "<th></th>";
-        print "</tr>";
-        // for loop to print each record in search query
-        foreach ($unapproved as $record) {
-            $appendURL = '?photo=' . $record['pmkPhotoId'];
-            // print the row
-            print '<tr>';
-            // Uses field names (AKA headers) as keys to pick from arrays
-            foreach ($headers as $field) {
-                if ($field == "fldFileName") {
-                    print '<td><a href="../uploads/' . htmlentities($record[$field]) . '">'
-                            . htmlentities($record[$field]) . '<a></td>';
-                } else {
-                    print '<td>' . htmlentities($record[$field]) . '</td>';
-                }
-            }
-            // after printing out all fields, now links to approve
-            print '<td><a href="' . $appendURL . '">Approve</a></td>';
 
+        print '<th>Remove</th>';
+
+        print "</tr>";
+
+        foreach ($photos as $photo) {
+            $action = ($photo['fldApproved']) ? "unapprove" : "approve";
+            $appendURL = '?activity=' . $activityID;
+            $appendURL .= '&photo=' . $photo['pmkPhotoId'];
+            $appendURL .= '&action=';
+
+            $approvalLink = $appendURL . $action;
+            $removalLink = $appendURL . 'remove';
+
+            print '<tr>';
+
+            foreach ($headers as $head) {
+                print '<td>';
+                if ($head == 'fldApproved') {
+                    print '<a href="' . $approvalLink . '">';
+
+                    if ($action == "approve") {
+                        print "Approve";
+                    } else {
+                        print "Unapprove";
+                    }
+
+                    print "</a>";
+                } else {
+                    print $photo[$head];
+                }
+
+                print '</td>';
+            }
+
+            print "<td>";
+            print '<a href="' . $removalLink . '">';
+            print 'Delete';
+            print '</a>';
+            print '</td>';
 
             print '</tr>';
-        } // closes foreach ($unapproved as $record) loop
-    }
-    // else -- to if $unapproved is empty
-    else {
-        print '<p>No activities need approval at this time.</p>';
+        }
+
+        print "</table>";
     }
 }
 
-print "</article>";
-
-
-print "</article";
-
-include '../footer.php';
-?>
+include "../footer.php";

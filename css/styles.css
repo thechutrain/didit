@@ -1,143 +1,54 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
-/* 
-    Created on : Dec 4, 2015, 1:21:52 PM
-    Author     : alanchu
-*/
 
-figure.bioPhoto > img{
-    border-radius: 500pt;
-    /*    max-width: 50px;*/
+a {
+    text-decoration: none;
 }
 
-/*body {
-    font: 24px Helvetica;
-    background: #999999;
+footer {
+    border:none !important;
 }
 
-.bioPhoto {
-    max-width: 220px;   
+#banner {
+    width: 100%;
 }
 
-img {
-    max-width: 200px;
-    border-radius: 200pt;
-    float: left;
-    margin-right: 20px;
-    margin-bottom: 20px;
+#head-callout {
+    margin-bottom: 0px;
 }
 
-.person {
-    min-height:200px;
-}
-#main {
-    min-height: 800px;
-    margin: 0px;
-    padding: 0px;
-    display: -webkit-flex;
-    display:         flex;
-    -webkit-flex-flow: row;
-    flex-flow: row;
+#nav-list {
+    text-align: center;
 }
 
-#articleContainer {
-    min-height: 800px;
-    margin: 0px;
-    padding: 0px;
-    display: -webkit-flex;
-    display:         flex;
-    -webkit-flex-flow: column;
-    flex-flow: column; 
-    -webkit-flex: 3 1 60%;
-    flex: 3 1 60%;
-    -webkit-order: 2;
-    order: 2;
+.alert-panel {
+    background-color: rgba(240, 65, 36, 0.67) !important;
 }
 
-#articleContainer > article {
-    margin: 4px;
-    padding: 5px;
-    border: 1px solid #cccc33;
-    border-radius: 7pt;
-    background: #dddd88;
-    -webkit-flex: 3 1 50%;
-    flex: 3 1 50%;
-    -webkit-order: 2;
-    order: 2;
+.alert-row {
+    background-color: rgba(240, 65, 36, 0.67) !important;
 }
 
-#main > nav {
-    margin: 4px;
-    padding: 5px;
-    border: 1px solid #8888bb;
-    border-radius: 7pt;
-    background: #ccccff;
-    -webkit-flex: 1 6 20%;
-    flex: 1 6 20%;
-    -webkit-order: 1;
-    order: 1;
+.menu > li > a {
+    text-decoration: none;
 }
 
-#main > aside {
-    margin: 4px;
-    padding: 5px;
-    border: 1px solid #8888bb;
-    border-radius: 7pt;
-    background: #ccccff;
-    -webkit-flex: 1 6 20%;
-    flex: 1 6 20%;
-    -webkit-order: 3;
-    order: 3;
+.menu > li > a:hover {
+    color: #003300;
 }
 
-header, footer {
-    display: block;
-    margin: 4px;
-    padding: 5px;
-    min-height: 100px;
-    border: 1px solid #eebb55;
-    border-radius: 7pt;
-    background: #ffeebb;
+.mistake {
+    background-color: rgba(240, 65, 36, 0.5) !important;
+    border: 2px solid #f04124 !important;
 }
 
- Too narrow to support three columns 
-@media all and (max-width: 640px) {
+.success-panel {
+    background-color: rgba(0, 102, 0, 0.5) !important;
+}
 
-    #main, #page {
-        -webkit-flex-flow: column;
-        flex-direction: column;
-    }
-       COMMENT THIS OUT
-       #main > article, #main > nav, #main > aside {
-         Return them to document order 
-        -webkit-order: 0;
-                order: 0;
-       }
+.unavailable {
+    display: none !important;
+}
 
-    #main > header{
-        -webkit-order: 0;
-        order: 0;    
-    }
-    #main > nav{
-        -webkit-order: 1;
-        order: 1;
-    }
-
-    #main > article{
-        -webkit-order: 2;
-        order: 2;
-    }
-
-    #main > footer{
-        -webkit-order: 10;
-        order: 10;
-    }
-    #main > nav, #main > aside, header, footer {
-        min-height: 50px;
-        max-height: 50px;
-    }
-
-}*/
+.vote-button {
+    padding-left: 0.5em !important;
+    padding-right: 0.5em !important;
+}

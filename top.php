@@ -1,6 +1,5 @@
 <?php
 $debug = false;
-$debug = htmlspecialchars($_GET["debug"]);
 
 include "lib/constants.php";
 require_once('lib/custom-functions.php');
@@ -9,7 +8,7 @@ require_once('lib/validation-functions.php');
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Chekkit| University of Vermont</title>
+        <title>diddit | University of Vermont</title>
         <meta charset="utf-8">
         <meta name="author" content="Joe Siebert, Alan Chu">
         <meta name="description" content="This site displays present and past student's favorite activities from when they were students at the University of Vermont. It's meant as a loose road map for current students and a source of nostalgia for alumni.">
@@ -150,11 +149,7 @@ require_once('lib/validation-functions.php');
     <?php
     print '<body id="' . $path_parts['filename'] . '">';
     
-    print '<div class="top-bar">';
-    include "nav.php";
-    print '</div>';
-    
-    print '<div class="callout large primary">';
+    print '<div class="row">';
     include "header.php";
     print '</div>';
     

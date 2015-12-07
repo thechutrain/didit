@@ -6,7 +6,7 @@ $numberRecords = 10;
 
 print "<article>";
 print "<h2>The List</h2>";
-print "<p>You can click on the names of the activities to get more information.";
+print "<p>Click on the names of the activities to get more information.";
 print " Please feel free to vote up or down activities you've done before.</p>";
 
 // Simple query to count records
@@ -14,7 +14,6 @@ $queryTotal = "SELECT COUNT(fldName) AS count";
 $queryTotal .= " FROM tblActivities";
 $queryTotal .= " WHERE fldApproved = ?";
 $totalData = array(1);
-//print_r(array(1));
 
 // SELECT all records
 $total = $thisDatabaseReader->select($queryTotal, $totalData, 1, 0, 0, 0, false, false);
@@ -27,7 +26,7 @@ if (isset($_GET['start']) AND ($_GET['start'] > 0
     $startRecord = 0;
 }
 
-print '<div class="text-center">';
+print '<div>';
 print '<h4>Displaying records ';
 
 print ($startRecord + 1) . ' - ';
@@ -38,7 +37,7 @@ if ($startRecord + $numberRecords > $total[0]['count']) {
 }
 print ' of ' . $total[0]['count'] . '</h4>';
 
-print '<ol class="menu text-center">';
+print '<ol class="inline-list no-bullet" id="nav-list">';
 print '<li';
 if ($startRecord - $numberRecords < 0) {
     print ' class="unavailable"';
@@ -155,7 +154,7 @@ if (isset($_POST['btnUpVote']) OR isset($_POST['btnDownVote'])) {
 
 // NEED TO ADD LIMIT CLAUSE
 $query = "SELECT pmkActivityId, fldName, fldCategory, fldOnCampus, fldTownName, fldState";
-//$query .= ", fldDistance, fldLocation, fldCost, fldURL, fldDescription, fnkSubmitNetId";
+$query .= ", fldDistance, fldLocation, fldCost, fldURL, fldDescription, fnkSubmitNetId";
 $query .= " FROM tblActivities A";
 $query .= " INNER JOIN tblVotes V ON A.pmkActivityId = V.fnkActivityId";
 $query .= " INNER JOIN tblTowns T ON A.fnkTownId = T.pmkTownId";
@@ -176,12 +175,14 @@ if ($debug) {
     print "</pre></p>";
 }
 
-$rank = 1;
+$rank = $startRecord + 1;
 
 // For loop to print records
 foreach ($info as $record) {
     print '<div id="dropdown-' . $rank . '" ';
     print 'class="panel dropdown dropdown-processed">';
+    
+    print '<p class="float-left"><b>' . $rank . "</b></p>";
     
     // ** Add vote buttons **//
     // Add upvote form/button
@@ -196,12 +197,12 @@ foreach ($info as $record) {
     
     // Add up button
     print '<input type="submit" id="btnUpVote-' . $record['pmkActivityId'] . '" ';
-    print 'name="btnUpVote" value="&#x25B2" ';
+    print 'name="btnUpVote" value="&#x25B2;" ';
     print 'tabindex="100" class="up-vote">';
     
     // Add down button
     print '<input type="submit" id="btnDownVote-' . $record['pmkActivityId'] . '" ';
-    print 'name="btnDownVote" value="&#x25BC" ';
+    print 'name="btnDownVote" value="&#x25BC;" ';
     print 'tabindex="110" class="down-vote">';
     print '</fieldset>';
     print '</form>';
@@ -217,7 +218,6 @@ foreach ($info as $record) {
         print 'Remove</a>] ';
     }
     
-    print $rank . '. ';
     print '<a class="dropdown-link" href="#">';
     print $record['fldName'];
     print '</a>';
@@ -251,8 +251,52 @@ foreach ($info as $record) {
     if ($record['fldDescription'] != "") {
         print '<li><b>Description:</b> ' . $record['fldDescription'] . '</li>';
     }
-
-    print '</ol></div></div>';
+    
+    print '</ol>';
+    
+    print "<h5>User Photos</h5>";
+    
+    $photoQuery = "SELECT fldFileName, fldCaption";
+    $photoQuery .= " FROM tblPhotos";
+    $photoQuery .= " WHERE fnkActivityId = ? AND";
+    $photoQuery .= " fldApproved = ?";
+    $photoData = array($record['pmkActivityId'], 1);
+    
+    // Call select method
+    $photos = $thisDatabaseReader->select($photoQuery, $photoData, 1, 1, 0, 0, false, false);
+    
+    if ($photos) {
+        $photoCount = 1;
+        
+        print '<div class="row">';
+        
+        print '<ul class="no-bullet">';
+        
+        foreach ($photos as $photo) {
+            if ($photoCount % 3 == 0) {
+            }
+            
+            print '<li class="large-4 columns">';
+            print '<a class="thumbnail" href="' . $path . 'uploads/';
+            print $photo['fldFileName'] . '">';
+            print '<img src="' . $path . 'uploads/' . $photo['fldFileName'] . '"';
+            print ' alt="' . $photo['fldCaption'] . '">';
+            print '</a></li>';
+                
+            $photoCount++;
+           
+        }
+        
+        print '</ul>';
+        print '</div>';
+    } else {
+        print "<p>No pictures have been uploaded for this activity.</p>";
+    }
+    
+    print '<p><a href="submit.php?activity=' . $record['pmkActivityId'] . '">';
+    print 'Click here to upload a photo of your own!</a></p>';
+    
+    print '</div></div>';
 
     $rank++;
 }

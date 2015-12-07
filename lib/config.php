@@ -1,15 +1,14 @@
 <?php
-/* 
-Source = http://www.bitrepository.com/how-to-validate-an-image-upload.html
+/*
 1 = Check if the file uploaded is actually an image no matter what extension it has
 2 = The uploaded files must have a specific image extension
 */
-
-$validation_type = 1;
-
-if($validation_type == 1)
+ 
+$validationType = 1;
+ 
+if ($validationType == 1)
 {
-	$mime = array('image/gif' => 'gif',
+    $mime = array('image/gif' => 'gif',
                   'image/jpeg' => 'jpeg',
                   'image/png' => 'png',
                   'application/x-shockwave-flash' => 'swf',
@@ -23,10 +22,9 @@ if($validation_type == 1)
                   'image/xbm' => 'xbm',
                   'image/vnd.microsoft.icon' => 'ico');
 }
-else if($validation_type == 2) // Second choice? Set the extensions
-{
-	$image_extensions_allowed = array('jpg', 'jpeg', 'png', 'gif','bmp');
+else if($validationType == 2) { // Second choice? Set the extensions
+    $imageExtensionsAllowed = array('jpg', 'jpeg', 'png', 'gif','bmp');
 }
-
-$upload_image_to_folder = 'uploads/';
+ 
+$uploadImageToFolder = 'uploads/';
 ?>

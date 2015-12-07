@@ -19,26 +19,24 @@ function securityCheck($path_parts, $yourURL, $form = false) {
     // add all your page names to this array
     $whiteListPages = array();
     $whiteListPages[] = "index.php";
-    $whiteListPages[] = "top-10.php";
+    $whiteListPages[] = "list.php";
     $whiteListPages[] = "form.php";
+    $whiteListPages[] = "about.php";
+    $whiteListPages[] = "submit.php";
     $whiteListPages[] = "approve.php";
     $whiteListPages[] = "remove.php";
-    $whiteListPages[] = "about.php";
-    $whiteListPages[] = "list.php";
-    $whiteListPages[] = "submitPhoto.php";
-    $whiteListPages[] = "submitPhotoTest.php";
-    $whiteListPages[] = "upload.php";
-    
+    $whiteListPages[] = "images.php";
+
     //add all the folders to this array
     $whiteListFolders = array();
     $whiteListFolders[] = "/cs148";
     $whiteListFolders[] = "/cs148develop";
     
-    $whiteListFolders[] = "/cs148/assignment10_foundation";
-    $whiteListFolders[] = "/cs148develop/assignment10_foundation";
+    $whiteListFolders[] = "/cs148/assignment10";
+    $whiteListFolders[] = "/cs148develop/assignment10";
     
-    $whiteListFolders[] = "/cs148/assignment10_foundation/admin";
-    $whiteListFolders[] = "/cs148develop/assignment10_foundation/admin";
+    $whiteListFolders[] = "/cs148/assignment10/admin";
+    $whiteListFolders[] = "/cs148develop/assignment10/admin";
 
     // Check for valid page name
     if (!in_array($path_parts['basename'], $whiteListPages)) {

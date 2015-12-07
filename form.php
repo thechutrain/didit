@@ -203,6 +203,7 @@ if (isset($_POST['btnSubmit'])) {
         $activityData[] = $approved;
     } else {
         $approved = 0;
+        $activityData[] = $approved;
     }
 
     // %^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
@@ -339,11 +340,8 @@ if (isset($_POST['btnSubmit'])) {
             $query .= ", fldDescription = ?";
         }
 
-        if ($approved) {
-            $query .= ", fldApproved = ?";
-        }
-
-        // Add town ID
+        // Add approval and town ID
+        $query .= ", fldApproved = ?";
         $query .= ", fnkTownId = ?";
 
         // For updates
@@ -397,7 +395,7 @@ if (isset($_POST['btnSubmit'])) {
 
         // %^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
         //
-        // SECTION 2f: Create message
+        // SECTION 2f: Create messages
 
         $message = "<h2>Thank you! Your activity has been submitted";
         if (!$approved) {
@@ -432,10 +430,15 @@ if (isset($_POST['btnSubmit'])) {
 
         $message .= "<br><p>Thanks again!</p>";
         $message .= "<br><p>The UVM diddit admin team</p>";
+        
+        $messageAdmin = "<h2>A new activity has been submitted to UVM diddit</h2>";
+        $messageAdmin .= "<p>" . $user . " submitted " . $activityName . ".</p>";
+        $messageAdmin .= "<p>Head over to the ";
+        $messageAdmin .= '<a href="https://jsiebert.w3.uvm.edu/cs148develop/assignment10/admin/approve.php">approve</a> page to confirm this submission.</p>';
 
         // %^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
         //
-        // SECTION 2g: Mail to user
+        // SECTION 2gA: Mail to user
 
         $email = $user . "@uvm.edu";
 
@@ -447,8 +450,19 @@ if (isset($_POST['btnSubmit'])) {
         // subject of mail should match form
         $subject = "Thanks for contributing to UVM diddit!";
 
+        // SECTION 2gB: Mail to admin
+        $toAdmin = "jsiebert@uvm.edu"; // joe
+        $ccAdmin = "aychu@uvm.edu"; // alan
+        $bccAdmin = "";
+        $fromAdmin = "UVM Activities <jsiebert@uvm.edu>";
+
+        // subject of mail should match form
+        $subjectAdmin = "New diddit submission from " . $user;
+        
         if (!$update) {
             $mailed = sendMail($to, $cc, $bcc, $from, $subject, $message);
+            $mailedAdmin = sendMail($toAdmin, $ccAdmin, $bccAdmin,
+                    $fromAdmin, $subjectAdmin, $messageAdmin);
         }
     }// ends form is valid
 } // ends if form was submitted
@@ -518,7 +532,7 @@ if (isset($_POST['btnSubmit'])) {
 
         <h2>Add an Activity to the List!</h2>
         <form action="<?php print $phpSelf; ?>"
-              method="post"
+              method="post" class="panel"
               id="frmAddActivity">
 
             <fieldset class="wrapper">
@@ -540,12 +554,10 @@ if (isset($_POST['btnSubmit'])) {
                                        tabindex="100" maxlength="45"
                                        <?php
                                        if (!adminCheck($thisDatabaseReader, $username))
-                                           print 'readonly';
-                                       ?>
-                                       class="no-edit
-                                       <?php if ($userError) print ' mistake'; ?>"
-                                       onfocus="this.select()"
-                                       autofocus>
+                                            print 'readonly';
+                                       if ($userError)
+                                           print 'class="mistake"'; ?>
+                                       onfocus="this.select()">
                             </label>
                         </div>
                     </div>
@@ -590,9 +602,9 @@ if (isset($_POST['btnSubmit'])) {
                                 <input type="text" id="txtActivityName" name="txtActivityName"
                                        value="<?php print $activityName; ?>"
                                        tabindex="110" maxlength="255"
-                                       <?php if ($activityNameError) print 'class="mistake"'; ?>
-                                       onfocus="this.select()"
-                                       autofocus>
+                                       <?php if ($activityNameError) 
+                                           print 'class="mistake"'; ?>
+                                       onfocus="this.select()">
                             </label>
                         </div>
                     </div>
@@ -605,7 +617,17 @@ if (isset($_POST['btnSubmit'])) {
                                     tabIndex="200">
                                         <?php
                                         // Array for listbox options
-                                        $categoryChoices = array("Select one", "Outdoor", "School-Related", "Social", "Other");
+                                        $categoryChoices = array(
+                                            "Select one",
+                                            "Arts",
+                                            "Entertainment",
+                                            "Live",
+                                            "Outdoor",
+                                            "School-Related",
+                                            "Social",
+                                            "Sports",
+                                            "Winter",
+                                            "Other");
 
                                         foreach ($categoryChoices as $choice) {
                                             print "\n\t\t\t" . "<option ";
@@ -636,8 +658,7 @@ if (isset($_POST['btnSubmit'])) {
                                        value="<?php print $town; ?>"
                                        tabindex="400" maxlength="255"
                                        <?php if ($townError) print 'class="mistake"'; ?>
-                                       onfocus="this.select()"
-                                       autofocus>
+                                       onfocus="this.select()">
                             </label>
                         </div>
 
@@ -665,8 +686,7 @@ if (isset($_POST['btnSubmit'])) {
                                        value="<?php print $distance; ?>"
                                        tabindex="420" maxlength="255"
                                        <?php if ($distanceError) print 'class="mistake"'; ?>
-                                       onfocus="this.select()"
-                                       autofocus>
+                                       onfocus="this.select()">
                             </label>
                         </div>
                     </div>
@@ -681,8 +701,7 @@ if (isset($_POST['btnSubmit'])) {
                                        value="<?php print $location; ?>"
                                        tabindex="500" maxlength="255"
                                        <?php if ($locationError) print 'class="mistake"'; ?>
-                                       onfocus="this.select()"
-                                       autofocus>
+                                       onfocus="this.select()">
                             </label>
                         </div>
                         <div class="large-12 columns">
@@ -691,8 +710,7 @@ if (isset($_POST['btnSubmit'])) {
                                        value="<?php print $cost; ?>"
                                        tabindex="510" maxlength="255"
                                        <?php if ($costError) print 'class="mistake"'; ?>
-                                       onfocus="this.select()"
-                                       autofocus>
+                                       onfocus="this.select()">
                             </label>
 
                             <label for="txtURL" class="required">URL
@@ -700,8 +718,7 @@ if (isset($_POST['btnSubmit'])) {
                                        value="<?php print $url; ?>"
                                        tabindex="520" maxlength="255"
                                        <?php if ($urlError) print 'class="mistake"'; ?>
-                                       onfocus="this.select()"
-                                       autofocus>
+                                       onfocus="this.select()">
                             </label>
                         </div>
                         <div class="large-12 columns">
@@ -723,10 +740,10 @@ if (isset($_POST['btnSubmit'])) {
                     print '<div class="row">';
                     print '<div class="large-12 columns">';
                     print '<label><input type="checkbox" id="chkApproved"';
-                    print 'name="chkApproved" value="Approved"';
+                    print ' name="chkApproved" value="Approved"';
                     if ($approved)
-                        print " checked ";
-                    print 'tabindex="700">Approve activity</label>';
+                        print " checked";
+                    print ' tabindex="700">Approve activity</label>';
                     print "</div></div>";
                     print '</fieldset>';
                 }
