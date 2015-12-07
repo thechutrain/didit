@@ -28,5 +28,5 @@ else if($validation_type == 2) // Second choice? Set the extensions
 	$image_extensions_allowed = array('jpg', 'jpeg', 'png', 'gif','bmp');
 }
 
-$upload_image_to_folder = 'admin/uploads/';
+$upload_image_to_folder = 'uploads/';
 ?>

@@ -104,7 +104,7 @@ if (!adminCheck($thisDatabaseReader, $username)) {
             // Uses field names (AKA headers) as keys to pick from arrays
             foreach ($headers as $field) {
                 if ($field == "fldFileName") {
-                    print '<td><a href="uploads/' . htmlentities($record[$field]) . '">'
+                    print '<td><a href="../uploads/' . htmlentities($record[$field]) . '">'
                             . htmlentities($record[$field]) . '<a></td>';
                 } else {
                     print '<td>' . htmlentities($record[$field]) . '</td>';

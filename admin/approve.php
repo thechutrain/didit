@@ -58,7 +58,6 @@ if (!adminCheck($thisDatabaseReader, $username)) {
     $query .= " ORDER BY fldDateSubmitted";
     $queryData = array(0);
 //    print_r(array(0));
-    
     // Call select method
     $info = $thisDatabaseReader->select($query, $queryData, 1, 1, 0, 0, false, false);
 
@@ -99,13 +98,13 @@ if (!adminCheck($thisDatabaseReader, $username)) {
         // For loop to print records
         foreach ($info as $record) {
             $appendURL = '?activity=' . $record['pmkActivityId'];
-            
+
             print '<tr>';
             // Uses field names (AKA headers) as keys to pick from arrays
             foreach ($headers as $field) {
                 print '<td>' . htmlentities($record[$field]) . '</td>';
             }
-            
+
             print '<td><a href="' . $appendURL . '">Approve</a></td>';
             print '<td><a href="' . $path . 'form.php' . $appendURL;
             print '">View/Edit</a></td>';
