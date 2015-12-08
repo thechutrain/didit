@@ -120,17 +120,20 @@ require_once('lib/validation-functions.php');
         // Set up database connection
         //
         
-        $dbUserName = get_current_user() . '_reader';
+//        $dbUserName = get_current_user() . '_reader';
+        $dbUserName = 'jsiebert_reader';
         $whichPass = "r"; //flag for which one to use.
         $dbName = DATABASE_NAME;
 
         $thisDatabaseReader = new Database($dbUserName, $whichPass, $dbName);
 
-        $dbUserName = get_current_user() . '_writer';
+//        $dbUserName = get_current_user() . '_writer';
+        $dbUserName = 'jsiebert_writer';
         $whichPass = "w";
         $thisDatabaseWriter = new Database($dbUserName, $whichPass, $dbName);
 
-        $dbUserName = get_current_user() . '_admin';
+//        $dbUserName = get_current_user() . '_admin';
+        $dbUserName = 'jsiebert_admin';
         $whichPass = "a";
         $thisDatabaseAdmin = new Database($dbUserName, $whichPass, $dbName);
         ?>
@@ -138,7 +141,6 @@ require_once('lib/validation-functions.php');
         <link rel="stylesheet" href="<?php print $path; ?>css/styles.css"
               type="text/css" media="screen">
         <link rel="stylesheet" href="<?php print $path; ?>css/foundation.css" />
-        <link rel="stylesheet" href="<?php print $path; ?>css/app.css" />
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="<?php print $path; ?>js/show-info.js"></script>
@@ -148,11 +150,11 @@ require_once('lib/validation-functions.php');
     <!-- **********************     Body section      ********************** -->
     <?php
     print '<body id="' . $path_parts['filename'] . '">';
-    
+
     print '<div class="row">';
     include "header.php";
     print '</div>';
-    
+
     print '<div class="row">';
     print '<main class="large-8 large-centered columns">';
     ?>

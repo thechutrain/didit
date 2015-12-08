@@ -32,11 +32,11 @@ function securityCheck($path_parts, $yourURL, $form = false) {
     $whiteListFolders[] = "/cs148";
     $whiteListFolders[] = "/cs148develop";
     
-    $whiteListFolders[] = "/cs148/assignment10";
-    $whiteListFolders[] = "/cs148develop/assignment10";
+    $whiteListFolders[] = "/cs148/assignment10_foundation";
+    $whiteListFolders[] = "/cs148develop/assignment10_foundation";
     
-    $whiteListFolders[] = "/cs148/assignment10/admin";
-    $whiteListFolders[] = "/cs148develop/assignment10/admin";
+    $whiteListFolders[] = "/cs148/assignment10_foundation/admin";
+    $whiteListFolders[] = "/cs148develop/assignment10_foundation/admin";
 
     // Check for valid page name
     if (!in_array($path_parts['basename'], $whiteListPages)) {
