@@ -15,6 +15,11 @@ require_once('lib/validation-functions.php');
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        
+        <!--add a vaicon to page tab-->
+        <link rel="icon"
+              type="image/icon"
+              href="images/icon_checkkit.png">
         <!--[if lt IE 9]>
         <script src="//html5shim.googlecode.com/sin/trunk/html5.js"></script>
         <![endif]-->
@@ -120,20 +125,20 @@ require_once('lib/validation-functions.php');
         // Set up database connection
         //
         
-//        $dbUserName = get_current_user() . '_reader';
-        $dbUserName = 'jsiebert_reader';
+        $dbUserName = get_current_user() . '_reader';
+//        $dbUserName = 'jsiebert_reader';
         $whichPass = "r"; //flag for which one to use.
         $dbName = DATABASE_NAME;
 
         $thisDatabaseReader = new Database($dbUserName, $whichPass, $dbName);
 
-//        $dbUserName = get_current_user() . '_writer';
-        $dbUserName = 'jsiebert_writer';
+        $dbUserName = get_current_user() . '_writer';
+//        $dbUserName = 'jsiebert_writer';
         $whichPass = "w";
         $thisDatabaseWriter = new Database($dbUserName, $whichPass, $dbName);
 
-//        $dbUserName = get_current_user() . '_admin';
-        $dbUserName = 'jsiebert_admin';
+        $dbUserName = get_current_user() . '_admin';
+//        $dbUserName = 'jsiebert_admin';
         $whichPass = "a";
         $thisDatabaseAdmin = new Database($dbUserName, $whichPass, $dbName);
         ?>
